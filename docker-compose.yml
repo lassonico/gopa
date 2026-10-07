@@ -1,0 +1,102 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DB_ENGINE=json
+      - JWT_SECRET=dev_secret_change_me_min_32_chars_!!
+      - JWT_EXPIRES_IN=15m
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - CORS_ORIGIN=http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176
+      - CLIENT_URL=${CLIENT_URL}
+      - COMERCIO_URL=${COMERCIO_URL}
+      - DOMICILIARIO_URL=${DOMICILIARIO_URL}
+      - TURNSTILE_SITE_KEY=${TURNSTILE_SITE_KEY}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - TURNSTILE_HOSTNAMES=${TURNSTILE_HOSTNAMES}
+      - TURNSTILE_EXCLUDED_ORIGINS=${TURNSTILE_EXCLUDED_ORIGINS}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
+      - FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}
+      - FIREBASE_SERVICE_ACCOUNT_PATH=firebase-service-account.json
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - PAYMENT_LINK_BASE_URL=${PAYMENT_LINK_BASE_URL}
+      - WOMPI_ENV=${WOMPI_ENV}
+      - WOMPI_PRIVATE_KEY=${WOMPI_PRIVATE_KEY}
+      - WOMPI_PUBLIC_KEY=${WOMPI_PUBLIC_KEY}
+      - WOMPI_INTEGRITY_SECRET=${WOMPI_INTEGRITY_SECRET}
+      - WOMPI_EVENTS_SECRET=${WOMPI_EVENTS_SECRET}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - domicilios-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - domicilios-network
+
+  comercio:
+    build:
+      context: ./comercio
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5174:80"
+    depends_on:
+      - backend
+    networks:
+      - domicilios-network
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5175:80"
+    depends_on:
+      - backend
+    networks:
+      - domicilios-network
+
+  domiciliario:
+    build:
+      context: ./domiciliario
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5176:80"
+    depends_on:
+      - backend
+    networks:
+      - domicilios-network
+
+networks:
+  domicilios-network:
+    driver: bridge

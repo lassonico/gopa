@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_ENGINE=mysql
+      - DB_HOST=mysql
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=domicilios_palermo
+      - DB_PORT=3306
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=15m
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - CORS_ORIGIN=https://tudominio.com,https://comercio.tudominio.com,https://admin.tudominio.com,https://domiciliario.tudominio.com
+      - CLIENT_URL=${CLIENT_URL}
+      - COMERCIO_URL=${COMERCIO_URL}
+      - DOMICILIARIO_URL=${DOMICILIARIO_URL}
+      - TURNSTILE_SITE_KEY=${TURNSTILE_SITE_KEY}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - TURNSTILE_HOSTNAMES=${TURNSTILE_HOSTNAMES}
+      - TURNSTILE_EXCLUDED_ORIGINS=${TURNSTILE_EXCLUDED_ORIGINS}
+      - CLIENT_URL=https://tudominio.com
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
+      - FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - PAYMENT_LINK_BASE_URL=${PAYMENT_LINK_BASE_URL}
+      - WOMPI_ENV=${WOMPI_ENV}
+      - WOMPI_PRIVATE_KEY=${WOMPI_PRIVATE_KEY}
+      - WOMPI_PUBLIC_KEY=${WOMPI_PUBLIC_KEY}
+      - WOMPI_INTEGRITY_SECRET=${WOMPI_INTEGRITY_SECRET}
+      - WOMPI_EVENTS_SECRET=${WOMPI_EVENTS_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - domicilios-network
+
+  mysql:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=domicilios_palermo
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - domicilios-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - backend
+      - frontend
+      - comercio
+      - admin
+      - domiciliario
+    restart: unless-stopped
+    networks:
+      - domicilios-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    networks:
+      - domicilios-network
+
+  comercio:
+    build:
+      context: ./comercio
+      dockerfile: Dockerfile
+    networks:
+      - domicilios-network
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    networks:
+      - domicilios-network
+
+  domiciliario:
+    build:
+      context: ./domiciliario
+      dockerfile: Dockerfile
+    networks:
+      - domicilios-network
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'"
+
+networks:
+  domicilios-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

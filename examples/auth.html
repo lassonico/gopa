@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión y Registro</title>
+    <meta name="">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Íconos de Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f8f9fa',
+                            100: '#ffe8b4',
+                            500: '#e68457', // Teal principal
+                            600: '#aa1c41',
+                            900: '#5e244e',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para suavizar transiciones */
+        .form-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        .input-field {
+            @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none transition-all duration-200 text-gray-800 placeholder-gray-400;
+        }
+    </style>
+</head>
+<body class="bg-brand-50 text-gray-900 antialiased min-h-screen flex">
+
+    <!-- Panel Izquierdo Visual (Oculto en móviles) -->
+    <div class="hidden lg:flex lg:w-1/2 relative bg-brand-900 overflow-hidden items-center justify-center">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute inset-0 bg-gradient-to-br from-brand-600/80 to-brand-900 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=2070&auto=format&fit=crop" 
+             alt="Team working" 
+             class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" />
+        
+        <!-- Contenido del panel visual -->
+        <div class="relative z-20 text-white p-12 max-w-lg text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md mb-8 border border-white/20 shadow-xl">
+                <i data-lucide="layers" class="w-8 h-8 text-brand-100"></i>
+            </div>
+            <h1 class="text-4xl font-bold mb-6 tracking-tight">Unete a nuestros cientos de Cliente de Domicilios Palermo</h1>
+            <p class="text-lg text-brand-100 leading-relaxed">
+                Palermo polo de desarrollo.
+            </p>
+            
+            <!-- Indicadores de UI simulada -->
+            <div class="mt-12 flex items-center justify-center gap-4">
+                <div class="w-2 h-2 rounded-full bg-white"></div>
+                <div class="w-2 h-2 rounded-full bg-white/40"></div>
+                <div class="w-2 h-2 rounded-full bg-white/40"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Derecho Formulario -->
+    <div class="w-full lg:w-1/2 flex flex-col items-center justify-start px-6 pt-12 sm:p-12 relative">
+        
+        <div class="w-full max-w-md animate-fade-in" id="auth-container">
+            
+            <!-- Encabezados dinámicos -->
+            <div class="text-center sm:text-left mb-8">
+                <h2 id="form-title" class="text-3xl font-bold text-brand-900 mb-2">Domicilios Palermo</h2>
+                <p id="form-subtitle" class="text-brand-500">Ingresa tus datos para acceder a tu cuenta.</p>
+            </div>
+
+            <!-- Botón de Google -->
+            <button onclick="handleGoogleAuth()" class="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-700 font-medium hover:bg-gray-50 hover:shadow-sm transition-all duration-200 mb-6 group relative overflow-hidden">
+                <div id="google-spinner" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin text-brand-600"></i>
+                </div>
+                <!-- SVG Logo de Google original -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5 transition-transform group-hover:scale-110">
+                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                </svg>
+                Continuar con Google
+            </button>
+
+            <!-- Divisor -->
+            <div class="relative flex items-center py-2 mb-6">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink-0 mx-4 text-sm text-gray-400 font-medium">O continúa con email</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <!-- Formulario Principal -->
+            <form id="auth-form" onsubmit="handleSubmit(event)" class="space-y-4">
+                
+                <!-- Campo Nombre (Solo visible en Registro) -->
+                <div id="name-field" class="hidden form-transition">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Nombre completo</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="user" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <input type="text" id="name" placeholder="Ej. Juan Pérez" class="w-full rounded-lg input-field pl-11 py-2">
+                    </div>
+                </div>
+
+                <!-- Campo Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Correo electrónico</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="mail" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" required placeholder="tu@correo.com" class="w-full rounded-lg input-field pl-11 py-2">
+                    </div>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div>
+                    <div class="flex items-center justify-between mb-1.5 ml-1 mr-1">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <a href="#" id="forgot-password" class="text-sm font-medium text-brand-600 hover:text-brand-500 transition-colors">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i data-lucide="lock" class="w-5 h-5 text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full rounded-lg input-field pl-11 pr-11 py-2">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+                            <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <!-- Requisitos de contraseña (Solo en registro) -->
+                    <p id="password-hint" class="hidden text-xs text-gray-500 mt-2 ml-1">Debe contener al menos 8 caracteres, un número y un símbolo.</p>
+                </div>
+
+                <!-- Botón Submit -->
+                <button type="submit" id="submit-btn" class="w-full mt-6 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 px-4 rounded-xl shadow-sm hover:shadow transition-all duration-200 flex items-center justify-center relative overflow-hidden">
+                    <span id="submit-text">Iniciar Sesión</span>
+                    <i data-lucide="loader-2" id="submit-spinner" class="w-5 h-5 animate-spin absolute hidden"></i>
+                </button>
+            </form>
+
+            <!-- Toggle Mode -->
+            <p class="mt-8 text-center text-sm text-gray-600">
+                <span id="toggle-text">¿No tienes una cuenta?</span> 
+                <button type="button" onclick="toggleMode()" class="font-semibold text-brand-600 hover:text-brand-500 hover:underline transition-all">
+                    <span id="toggle-link">Regístrate gratis</span>
+                </button>
+            </p>
+
+            <!-- Términos (Solo visible en registro) -->
+            <p id="terms-text" class="hidden text-xs text-center text-gray-500 mt-6 max-w-xs mx-auto">
+                Al registrarte, aceptas nuestros <a href="#" class="underline hover:text-gray-800">Términos de servicio</a> y <a href="#" class="underline hover:text-gray-800">Política de privacidad</a>.
+            </p>
+
+        </div>
+    </div>
+
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Estado de la aplicación
+        let isLogin = true;
+
+        // Referencias al DOM
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const nameField = document.getElementById('name-field');
+        const nameInput = document.getElementById('name');
+        const passwordHint = document.getElementById('password-hint');
+        const forgotPassword = document.getElementById('forgot-password');
+        const submitText = document.getElementById('submit-text');
+        const toggleText = document.getElementById('toggle-text');
+        const toggleLink = document.getElementById('toggle-link');
+        const termsText = document.getElementById('terms-text');
+        const container = document.getElementById('auth-container');
+
+        // Alternar entre Login y Registro
+        function toggleMode() {
+            isLogin = !isLogin;
+            
+            // Animación suave de salida/entrada
+            container.style.opacity = '0.5';
+            container.style.transform = 'scale(0.98)';
+            
+            setTimeout(() => {
+                if (isLogin) {
+                    // Modo Login
+                    formTitle.textContent = 'Domicilios Palermo';
+                    formSubtitle.textContent = 'Ingresa tus datos para acceder a tu cuenta.';
+                    nameField.classList.add('hidden');
+                    nameInput.removeAttribute('required');
+                    passwordHint.classList.add('hidden');
+                    forgotPassword.classList.remove('hidden');
+                    submitText.textContent = 'Iniciar Sesión';
+                    toggleText.textContent = '¿No tienes una cuenta?';
+                    toggleLink.textContent = 'Regístrate gratis';
+                    termsText.classList.add('hidden');
+                } else {
+                    // Modo Registro
+                    formTitle.textContent = 'Únete a Domicilios Palermo';
+                    formSubtitle.textContent = 'Palermo Digital';
+                    nameField.classList.remove('hidden');
+                    nameInput.setAttribute('required', 'true');
+                    passwordHint.classList.remove('hidden');
+                    forgotPassword.classList.add('hidden');
+                    submitText.textContent = 'Crear cuenta';
+                    toggleText.textContent = '¿Ya tienes una cuenta?';
+                    toggleLink.textContent = 'Inicia sesión';
+                    termsText.classList.remove('hidden');
+                }
+                
+                // Restaurar animación
+                container.style.opacity = '1';
+                container.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Alternar visibilidad de contraseña
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons(); // Re-renderizar icono
+        }
+
+        // Manejar simulación de Login con Google
+        function handleGoogleAuth() {
+            const spinner = document.getElementById('google-spinner');
+            spinner.classList.remove('hidden');
+            
+            // Simular petición de red
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                showNotification(`Autenticando con Google en modo ${isLogin ? 'inicio de sesión' : 'registro'}...`);
+            }, 1500);
+        }
+
+        // Manejar envío de formulario
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submit-btn');
+            const text = document.getElementById('submit-text');
+            const spinner = document.getElementById('submit-spinner');
+            
+            // Estado de carga
+            text.classList.add('invisible');
+            spinner.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            // Simular petición de red
+            setTimeout(() => {
+                // Restaurar botón
+                text.classList.remove('invisible');
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                
+                showNotification(`¡${isLogin ? 'Sesión iniciada' : 'Cuenta creada'} con éxito!`);
+            }, 1500);
+        }
+
+        // Sistema de notificaciones simple personalizado (Reemplazo de Alert)
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl transform translate-y-full opacity-0 transition-all duration-300 z-50 flex items-center gap-3';
+            notif.innerHTML = `
+                <div class="w-2 h-2 bg-brand-400 rounded-full"></div>
+                <span class="font-medium">${message}</span>
+            `;
+            
+            document.body.appendChild(notif);
+            
+            // Animar entrada
+            requestAnimationFrame(() => {
+                notif.classList.remove('translate-y-full', 'opacity-0');
+            });
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notif.classList.add('translate-y-full', 'opacity-0');
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
