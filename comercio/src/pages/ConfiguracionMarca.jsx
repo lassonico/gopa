@@ -82,9 +82,14 @@ export default function ConfiguracionMarca() {
     
     try {
       const formData = new FormData();
-      // Convertir base64 a blob
-      const response = await fetch(preview);
-      const blob = await response.blob();
+      // La data URL es base64: convertir a Blob directamente (fetch() sobre data:
+      // queda bloqueado por el CSP connect-src en producción/dev)
+      const partes = preview.split(',');
+      const mime = (partes[0].match(/^data:([^;]+);/) || [])[1] || 'image/png';
+      const bin = atob(partes[1] || '');
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: mime });
       formData.append('logo', blob, 'logo.png');
       
       await comercioApi.subirLogo(user.comercioId, formData);

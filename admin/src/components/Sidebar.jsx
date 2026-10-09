@@ -24,6 +24,7 @@ export default function Sidebar({ abierto = false, onCerrar = () => {} }) {
         <NavLink to="/mandados">🚴 Mandados</NavLink>
         <NavLink to="/trabajos">🧵 Cola</NavLink>
         <NavLink to="/solicitudes">📨 Solicitudes</NavLink>
+        <NavLink to="/tarifas">💲 Tarifas</NavLink>
         <NavLink to="/reportes">📈 Reportes</NavLink>
       </nav>
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: 12, marginTop: 8 }}>

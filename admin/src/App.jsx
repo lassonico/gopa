@@ -18,6 +18,7 @@ import Domiciliarios from './pages/Domiciliarios';
 import Solicitudes from './pages/Solicitudes';
 import Mandados from './pages/Mandados';
 import Trabajos from './pages/Trabajos';
+import Tarifas from './pages/Tarifas';
 import NoEncontrado from './pages/NoEncontrado';
 import Sidebar from './components/Sidebar';
 import Loader from './components/Loader';
@@ -83,6 +84,7 @@ export default function App() {
               <Route path="/solicitudes/*" element={<Solicitudes />} />
               <Route path="/mandados/*" element={<Mandados />} />
               <Route path="/trabajos/*" element={<Trabajos />} />
+              <Route path="/tarifas" element={<Tarifas />} />
               <Route path="/login" element={<Navigate to="/" replace />} />
               <Route path="*" element={<NoEncontrado />} />
             </Routes>

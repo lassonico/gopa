@@ -71,7 +71,9 @@ exports.create = async (req, res, next) => {
     const ciudad = req.body.ciudad === 'neiva' ? 'neiva' : 'palermo';
     const costoEnvio = req.body.costoEnvio || (ciudad === 'neiva' ? '30000' : '');
     const tiempoEstimado = req.body.tiempoEstimado || (ciudad === 'neiva' ? '100' : '');
-    const nuevo = {
+    const { leerTarifas } = require('../../services/tarifas.service');
+    const tarifas = await leerTarifas(repository);
+    const comercio = {
       id: generateId(),
       nombreNegocio,
       nombrePropietario,
@@ -89,14 +91,14 @@ exports.create = async (req, res, next) => {
       valorEmpaque: valorEmpaque || '0',
       ciudad,
       ...(ciudad === 'neiva' ? { costoEnvio, tiempoEstimado } : {}),
-      comision: comision === '' || comision == null ? 10 : Number(String(comision).replace(',', '.')) || 0,
+      comision: comision === '' || comision == null ? tarifas.comisionVentas : Number(String(comision).replace(',', '.')) || 0,
       estado: 'aprobado',
       activo: 'true',
       fechaRegistro: formatDate(),
       calificacionPromedio: '0',
       totalCalificaciones: '0'
     };
-    await repository.create(SHEET, nuevo);
+    await repository.create(SHEET, comercio);
 
     if (email && password) {
       const bcrypt = require('bcryptjs');
@@ -110,13 +112,13 @@ exports.create = async (req, res, next) => {
         direccion: direccion || '',
         password: hashedPassword,
         rol: 'comercio',
-        comercioId: nuevo.id,
+        comercioId: comercio.id,
         activo: 'true',
         fechaRegistro: formatDate()
       });
     }
 
-    res.status(201).json(nuevo);
+    res.status(201).json(comercio);
   } catch (error) {
     next(error);
   }
@@ -191,7 +193,7 @@ exports.update = async (req, res, next) => {
       }
       if (comercioData.fachada !== undefined) {
         comercioData.fachada = String(comercioData.fachada).slice(0, 2000);
-        if (comercioData.fachada && !/^https?:\/\//.test(comercioData.fachada)) {
+        if (comercioData.fachada && !/^https?:\/\//.test(comercioData.fachada) && !comercioData.fachada.startsWith('/uploads/')) {
           return res.status(400).json({ error: 'URL de fachada inválida' });
         }
       }
