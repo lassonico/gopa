@@ -163,6 +163,7 @@ app.use('/api/anuncios', require('./modules/anuncios/anuncios.routes'));
 app.use('/api/mandados', require('./modules/mandados/mandados.routes'));
 app.use('/api/verificacion', require('./modules/verificacion/verificacion.routes'));
 app.use('/api/trabajos', require('./modules/trabajos/trabajos.routes'));
+app.use('/api/configuraciones', require('./modules/configuraciones/configuraciones.routes'));
 app.use('/api/upload', require('./modules/uploads/uploads.routes'));
 
 app.get('/api/health', (req, res) => {
