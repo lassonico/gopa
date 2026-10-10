@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https: blob:",
-    `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://accounts.google.com ${isProd ? '' : 'http://localhost:3001 http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176'}`,
+    `connect-src 'self' https://*.googleapis.com https://www.google.com https://www.recaptcha.net https://*.firebaseio.com wss://*.firebaseio.com https://accounts.google.com ${isProd ? '' : 'http://localhost:3001 http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176'}`,
     "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com https://*.web.app",
     "object-src 'none'",
     "base-uri 'self'",

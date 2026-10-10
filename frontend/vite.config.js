@@ -21,12 +21,12 @@ export default defineConfig(({ mode }) => {
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' ${isProd ? '' : "'unsafe-eval' "}https://apis.google.com https://www.gstatic.com https://accounts.google.com`,
+    `script-src 'self' 'unsafe-inline' ${isProd ? '' : "'unsafe-eval' "}https://apis.google.com https://www.gstatic.com https://www.google.com https://www.recaptcha.net https://accounts.google.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com`,
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https: blob:",
-    `connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://accounts.google.com ${isProd ? '' : 'http://localhost:3001 http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176'}`,
-    "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com https://*.web.app https://maps.google.com",
+    `connect-src 'self' https://*.googleapis.com https://www.google.com https://www.recaptcha.net https://*.firebaseio.com wss://*.firebaseio.com https://accounts.google.com ${isProd ? '' : 'http://localhost:3001 http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176'}`,
+    "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com https://*.web.app https://www.google.com https://maps.google.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
