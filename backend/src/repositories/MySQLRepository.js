@@ -12,7 +12,7 @@ const ALLOWED_TABLES = new Set([
   'Usuarios', 'Comercios', 'Productos', 'Categorias', 'Subcategorias',
   'Pedidos', 'Calificaciones', 'Notificaciones', 'Cupones', 'Pagos',
   'Promociones', 'Servicios', 'Solicitudes', 'Mandados', 'Anuncios',
-  'TrabajosFallidos', 'Verificaciones', 'Invitaciones',
+  'TrabajosFallidos', 'Verificaciones', 'Invitaciones', 'Configuraciones', 'configuraciones',
 ]);
 const IDENT_RE = /^[A-Za-z0-9_]+$/;
 
