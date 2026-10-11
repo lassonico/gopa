@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -17,7 +15,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=15m
       - JWT_REFRESH_EXPIRES_IN=7d
-      - CORS_ORIGIN=https://tudominio.com,https://comercio.tudominio.com,https://admin.tudominio.com,https://domiciliario.tudominio.com
+      - CORS_ORIGIN=https://app.domipalermo.com,https://comercio.domipalermo.com,https://admin.domipalermo.com,https://domiciliario.domipalermo.com
       - CLIENT_URL=${CLIENT_URL}
       - COMERCIO_URL=${COMERCIO_URL}
       - DOMICILIARIO_URL=${DOMICILIARIO_URL}
@@ -25,7 +23,6 @@ services:
       - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
       - TURNSTILE_HOSTNAMES=${TURNSTILE_HOSTNAMES}
       - TURNSTILE_EXCLUDED_ORIGINS=${TURNSTILE_EXCLUDED_ORIGINS}
-      - CLIENT_URL=https://tudominio.com
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
@@ -55,6 +52,7 @@ services:
 
   mysql:
     image: mysql:8
+    command: --lower-case-table-names=1
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=domicilios_palermo
@@ -75,11 +73,14 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
-      - "443:443"
+      # Puertos de compatibilidad con la config actual del túnel Cloudflare
+      # (mientras se reapunta a :80). nginx enruta por server_name/Host.
+      - "5173:80"
+      - "5174:80"
+      - "5175:80"
+      - "5176:80"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
     depends_on:
       - backend
       - frontend
@@ -117,13 +118,6 @@ services:
       dockerfile: Dockerfile
     networks:
       - domicilios-network
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'"
 
 networks:
   domicilios-network:
