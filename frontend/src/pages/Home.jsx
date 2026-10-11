@@ -316,7 +316,7 @@ export default function Home() {
                         }
                       }}
                       style={{
-                        borderRadius: 16, overflow: 'hidden', minHeight: 200,
+                        borderRadius: 16, overflow: 'hidden', minHeight: 200, position: 'relative', display: 'flex',
                         background: promo.imagen
                           ? `url(${promo.imagen}) center/cover no-repeat`
                           : 'linear-gradient(135deg, #aa1c41, #e68457)',
@@ -324,7 +324,7 @@ export default function Home() {
                         cursor: promo.comercioId || promo.link ? 'pointer' : 'default',
                       }}
                     >
-                      <div style={{ padding: 20, color: '#fff', background: 'rgba(0,0,0,0.2)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ padding: 20, color: '#fff', background: 'rgba(0,0,0,0.2)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <span style={{
                           background: '#ffe8b4', color: '#5e244e', fontSize: 10, fontWeight: 700,
                           padding: '4px 8px', borderRadius: 9999, textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start',
