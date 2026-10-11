@@ -224,6 +224,8 @@ export default function Home() {
 
   if (loading || !loaded) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#f8f9fa' }}><Loader /></div>;
 
+  const avatarUrl = user?.avatar || (user?.id ? localStorage.getItem(`avatar_${user.id}`) : null);
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif", background: '#f8f9fa', minHeight: '100vh', paddingBottom: 96 }}>
       <header style={{
@@ -246,8 +248,8 @@ export default function Home() {
           </div>
           <Link to="/perfil" aria-label="Mi perfil" style={{ position: 'relative', textDecoration: 'none' }}>
             <img
-              src={`https://ui-avatars.com/api/?name=${user?.nombre || 'Usuario'}&background=ffe8b4&color=5e244e`}
-              alt="Mi perfil" style={{ width: 40, height: 40, borderRadius: '50%', border: '2px solid #e68457', cursor: 'pointer' }}
+              src={avatarUrl || `https://ui-avatars.com/api/?name=${user?.nombre || 'Usuario'}&background=ffe8b4&color=5e244e`}
+              alt="Mi perfil" style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', border: '2px solid #e68457', cursor: 'pointer' }}
             />
             <div style={{ position: 'absolute', top: 0, right: 0, width: 12, height: 12, background: '#10B981', borderRadius: '50%', border: '2px solid #5e244e' }} />
           </Link>
@@ -314,7 +316,7 @@ export default function Home() {
                         }
                       }}
                       style={{
-                        borderRadius: 16, overflow: 'hidden', minHeight: 160,
+                        borderRadius: 16, overflow: 'hidden', minHeight: 200,
                         background: promo.imagen
                           ? `url(${promo.imagen}) center/cover no-repeat`
                           : 'linear-gradient(135deg, #aa1c41, #e68457)',
@@ -322,7 +324,7 @@ export default function Home() {
                         cursor: promo.comercioId || promo.link ? 'pointer' : 'default',
                       }}
                     >
-                      <div style={{ padding: 20, color: '#fff', background: 'rgba(0,0,0,0.3)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ padding: 20, color: '#fff', background: 'rgba(0,0,0,0.2)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <span style={{
                           background: '#ffe8b4', color: '#5e244e', fontSize: 10, fontWeight: 700,
                           padding: '4px 8px', borderRadius: 9999, textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start',
@@ -549,7 +551,7 @@ export default function Home() {
               </>
             )}
 
-            {(!searchTerm || tabResultados === 'consumo' || tabResultados === 'tiendas') && (!searchTerm ? resultados.comercios.slice(0, 4) : (tabResultados === 'tiendas' ? resultados.tiendas : resultados.consumo).slice(0, 10)).map((com, i) => (
+            {(!searchTerm || tabResultados === 'consumo' || tabResultados === 'tiendas') && (!searchTerm ? resultados.comercios.slice(0, 10) : (tabResultados === 'tiendas' ? resultados.tiendas : resultados.consumo).slice(0, 10)).map((com, i) => (
               <Link key={com.id} to={`/comercios/${com.id}`} style={{ textDecoration: 'none' }}>
                 <div style={{
                   background: '#fff', borderRadius: 16, padding: 12, display: 'flex',
@@ -605,7 +607,7 @@ export default function Home() {
                 </div>
               </Link>
             ))}
-            {!searchTerm && resultados.comercios.length > 4 && (
+            {!searchTerm && resultados.comercios.length > 10 && (
               <Link to="/comercios" style={{ alignSelf: 'center', fontSize: 13, fontWeight: 700, color: '#5e244e', background: '#fff', border: '1px solid #f3f4f6', borderRadius: 9999, padding: '10px 20px', textDecoration: 'none' }}>
                 Ver todos los comercios →
               </Link>
@@ -652,7 +654,7 @@ export default function Home() {
               </button>
             </div>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px', lineHeight: 1.5 }}>
-              Solicita un mensajero para que haga diligencias por tí en Palermo. Acuerda con la tarifa.
+              Solicita un mensajero para que haga diligencias por ti en Palermo. Acuerda la tarifa con él.
             </p>
 
             <label htmlFor="mandado-direccion" style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
