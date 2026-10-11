@@ -633,7 +633,25 @@ class MySQLRepository {
         out[field] = out[field] === true || out[field] === 'true' || out[field] === 1 || out[field] === '1' ? 1 : 0;
       }
     }
+    for (const key of Object.keys(out)) {
+      const iso = this._toMySQLDate(out[key]);
+      if (iso !== out[key]) out[key] = iso;
+    }
     return out;
+  }
+
+  // MySQL (modo estricto) no acepta el formato ISO 8601 con "T...Z" en columnas
+  // DATETIME. Los controladores usan formatDate() (= toISOString()), así que aquí
+  // se normaliza a "YYYY-MM-DD HH:mm:ss" (UTC) antes de escribir.
+  _toMySQLDate(value) {
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? value : value.toISOString().slice(0, 19).replace('T', ' ');
+    }
+    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? value : d.toISOString().slice(0, 19).replace('T', ' ');
+    }
+    return value;
   }
 
   // Columnas reales por tabla (cacheadas). Sirve para que un payload con
