@@ -6,15 +6,10 @@ dist/
 build/
 out/
 
-# Entorno y secretos
+# Entorno y secretos (ningún archivo de entorno se versiona, ni plantillas)
 .env
-.env.local
-.env.production
-.env.development
-frontend/.env
-backend/.env
+.env.*
 *.env
-!*.env.example
 
 # Firebase / certificados / archivos sensibles
 firebase-service-account.json

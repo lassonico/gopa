@@ -110,15 +110,14 @@ habla HTTPS con Cloudflare; el túnel habla HTTP con nginx.
 ```
 app/
 ├── backend/                 # API REST (Express)
-│   ├── src/
-│   │   ├── config/          # Lectura y validación de variables de entorno
-│   │   ├── middleware/      # Auth, CORS, CSRF, rate-limit, uploads...
-│   │   ├── modules/         # Un módulo por dominio (auth, pedidos, pagos...)
-│   │   ├── repositories/    # MySQLRepository | JsonFileRepository
-│   │   ├── services/        # Integraciones (Firebase, Cloudinary, IA, pagos)
-│   │   ├── test/            # Pruebas Vitest + supertest
-│   │   └── index.js         # Arranque de Express
-│   └── .env.example
+│   └── src/
+│       ├── config/          # Lectura y validación de variables de entorno
+│       ├── middleware/      # Auth, CORS, CSRF, rate-limit, uploads...
+│       ├── modules/         # Un módulo por dominio (auth, pedidos, pagos...)
+│       ├── repositories/    # MySQLRepository | JsonFileRepository
+│       ├── services/        # Integraciones (Firebase, Cloudinary, IA, pagos)
+│       ├── test/            # Pruebas Vitest + supertest
+│       └── index.js         # Arranque de Express
 ├── frontend/                # Cliente (app.domipalermo.com)
 ├── comercio/                # Panel de comercios (comercio.domipalermo.com)
 ├── domiciliario/            # App repartidores (domiciliario.domipalermo.com)
@@ -149,13 +148,9 @@ app/
 
 ## Variables de entorno
 
-Los secretos **nunca** se versionan (`.env` está en `.gitignore`). Usa las
-plantillas como base:
-
-```bash
-cp backend/.env.example backend/.env   # si corres el backend sin Docker
-cp .env.example .env                   # compose (raíz) — si existe en tu entorno
-```
+Los secretos **nunca** se versionan (`.env` está en `.gitignore`). Crea tu
+propio `.env` (uno en la raíz para Docker Compose y/o uno en `backend/` si
+corres la API sin Docker) a partir de la lista de variables de abajo.
 
 Para Docker Compose, el archivo de la **raíz** `.env` alimenta las variables
 `${...}` de los compose. Variables principales:
@@ -214,7 +209,7 @@ cd backend && npm install && npm run dev
 cd frontend && npm install && npm run dev
 ```
 
-Para usar MySQL local en el backend, copia `backend/.env.example`, pon
+Para usar MySQL local en el backend, crea un `backend/.env` con
 `DB_ENGINE=mysql` y completa `DB_*`.
 
 ---
