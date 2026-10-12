@@ -93,7 +93,6 @@ const solicitarComercioSchema = z.object({
   descripcion: z.string().max(150, 'Máximo 150 caracteres').optional().or(z.literal('')),
   dominical: z.enum(['true', 'false']).optional(),
   productosPrincipales: z.string().max(500).optional().or(z.literal('')),
-  logo: z.string().max(500).optional().or(z.literal('')),
   fotografias: z.string().max(10000000).optional().or(z.literal('')),
   cobraEmpaque: z.enum(['no', 'si']).optional(),
   tipoEmpaque: z.enum(['pedido', 'empaque']).optional(),
