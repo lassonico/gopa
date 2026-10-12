@@ -119,7 +119,7 @@ exports.solicitarRegistroComercio = async (req, res, next) => {
 
     // Declaración de derechos de imagen (prueba para Ley 23/1982 y Decisión 351)
     const conImagenes = (Array.isArray(productos) && productos.some(p => p && p.imagen))
-      || body.logo || body.fachada || body.cartaImagen;
+      || body.logo || body.fachada || body.tieneCarta;
     if (conImagenes && body.declaraDerechos !== true) {
       return res.status(400).json({ error: 'Debes declarar que tienes derechos sobre las imágenes' });
     }

@@ -506,8 +506,10 @@ export default function SolicitarRegistro() {
     setError('');
     setLoading(true);
     try {
+      const { cartaImagen, ...formData } = form;
       const dataToSend = {
-        ...form,
+        ...formData,
+        tieneCarta: !!cartaImagen,
         email: form.emailContacto.trim(),
         pruebaSms,
         dominical: grupoCategoria === 'dominicales' ? 'true' : 'false',

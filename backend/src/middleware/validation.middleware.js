@@ -97,7 +97,7 @@ const solicitarComercioSchema = z.object({
   cobraEmpaque: z.enum(['no', 'si']).optional(),
   tipoEmpaque: z.enum(['pedido', 'empaque']).optional(),
   valorEmpaque: z.string().regex(/^\d+([.,]\d+)?$/, 'Valor inválido').max(20).optional().or(z.literal('')).transform(v => v ? String(v).trim().replace(',', '.') : ''),
-  cartaImagen: z.string().max(15000000).optional().or(z.literal('')),
+  tieneCarta: z.boolean().optional(),
   logo: z.string().url('Logo inválido').max(2000).optional().or(z.literal('')),
   fachada: z.string().url('Fachada inválida').max(2000).optional().or(z.literal('')),
   productos: z.array(productoSolicitudSchema).max(100).optional(),
