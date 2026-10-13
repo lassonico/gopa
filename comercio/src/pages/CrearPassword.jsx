@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import Turnstile, { TURNSTILE_ENABLED } from '../components/Turnstile';
 import logo from '/GoPalermoOscuro.svg';
 
 export default function CrearPassword() {
@@ -13,6 +14,8 @@ export default function CrearPassword() {
   const [error, setError] = useState('');
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
 
   const validar = () => {
     if (password.length < 12) return 'Mínimo 12 caracteres.';
@@ -32,11 +35,13 @@ export default function CrearPassword() {
     if (!token) { setError('Enlace inválido.'); return; }
     setLoading(true);
     try {
-      await api.post('/auth/crear-password-comercio', { token, password });
+      await api.post('/auth/crear-password-comercio', { token, password, turnstileToken });
       setOk(true);
       setTimeout(() => navigate('/login'), 2500);
     } catch (err) {
       setError(err.response?.data?.error || err.response?.data?.details || 'No se pudo crear la contraseña.');
+      try { turnstileRef.current?.reset(); } catch {}
+      setTurnstileToken('');
     } finally {
       setLoading(false);
     }
@@ -86,8 +91,9 @@ export default function CrearPassword() {
             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
               Mínimo 12 caracteres con mayúscula, minúscula, número y símbolo.
             </p>
-            <button type="submit" disabled={loading}
-              style={{ width: '100%', padding: '14px', borderRadius: 12, background: '#aa1c41', color: '#fff', fontSize: 15, fontWeight: 600, border: 'none', cursor: loading ? 'wait' : 'pointer' }}>
+            <Turnstile ref={turnstileRef} action="register" onToken={setTurnstileToken} onExpire={() => setTurnstileToken('')} onError={() => setTurnstileToken('')} />
+            <button type="submit" disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
+              style={{ width: '100%', padding: '14px', borderRadius: 12, background: loading || (TURNSTILE_ENABLED && !turnstileToken) ? '#aa1c4180' : '#aa1c41', color: '#fff', fontSize: 15, fontWeight: 600, border: 'none', cursor: loading ? 'wait' : (TURNSTILE_ENABLED && !turnstileToken) ? 'not-allowed' : 'pointer' }}>
               {loading ? 'Creando...' : 'Crear contraseña e ir a iniciar sesión'}
             </button>
           </form>
