@@ -229,7 +229,7 @@ export default function Home() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif", background: '#f8f9fa', minHeight: '100vh', paddingBottom: 96 }}>
       <header style={{
-        background: 'linear-gradient(to bottom, #6c234b 30%, #961e44 100%)', color: '#fff', padding: '16px 16px 20px',
+        background: 'linear-gradient(to bottom, #6c234b 10%, #e58357 20%, #961e44 100%)', color: '#fff', padding: '16px 16px 20px',
         position: 'sticky', top: 0, zIndex: 50, borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)',
       }}> 
