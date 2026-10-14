@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
           name: 'GoPalermo',
           short_name: 'GoPalermo',
           description: 'Tu plataforma de domicilios',
-          theme_color: '#5E244E',
+          theme_color: '#6c234b',
           background_color: '#f8f9fa',
           display: 'standalone',
           orientation: 'portrait',
