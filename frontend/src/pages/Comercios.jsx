@@ -52,6 +52,9 @@ export default function Comercios() {
           borderBottomLeftRadius:24,
           borderBottomRightRadius: 24,
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}}>
+        <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: 16, marginBottom: 8, cursor: 'pointer' }}>
+          ← Volver
+        </button>
         <h1>Consumo</h1>
       </div>
 
