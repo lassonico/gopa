@@ -10,8 +10,11 @@ export default function Favoritos() {
   }, []);
 
   return (
-    <div className="container" style={{ paddingBottom: 80 }}>
-      <div className="header"><h1>Favoritos</h1></div>
+    <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 80px 16px", minHeight: "100vh"}}>
+      <div style={{
+        background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff', padding: '16px 16px 20px',
+        position: 'sticky', top: 0, zIndex: 50, borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}} ><h1 style={{ fontSize: 24, fontWeight: 800, margin: '4px 0 4px' }}>Favoritos</h1></div>
 
       {list.length === 0 ? (
         <div className="empty-state">

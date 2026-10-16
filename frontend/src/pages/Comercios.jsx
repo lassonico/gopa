@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { comercios } from '../services/api';
 import { useData } from '../contexts/DataContext';
 import Loader from '../components/Loader';
@@ -7,6 +7,7 @@ import { esCiudadNeiva } from '../utils/formatTiempo';
 import { esComercioTienda, subsConsumo, coincideSubLista } from '../utils/tiendas';
 
 export default function Comercios() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const catFilter = searchParams.get('categoria');
   const { categoriasList: cats, loaded } = useData();
@@ -42,7 +43,7 @@ export default function Comercios() {
   if (loading || !loaded) return <div className="loading"><Loader /></div>;
 
   return (
-    <div className="container" style={{ paddingBottom: 80 }}>
+    <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 80px 16px", minHeight: "100vh"}} >
       <div style={{
           background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
           color: '#fff', padding: '16px 16px 20px',
@@ -55,7 +56,7 @@ export default function Comercios() {
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: 16, marginBottom: 8, cursor: 'pointer' }}>
           ← Volver
         </button>
-        <h1>Consumo</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 800, margin: '4px 0 4px' }}>Consumo</h1>
       </div>
 
       <div style={{ display: 'flex', gap: 8, overflowX: 'auto', margin: '12px 0', paddingBottom: 8 }}>
