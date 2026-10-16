@@ -40,14 +40,17 @@ export default function Tiendas() {
   return (
     <div className="container" style={{ paddingBottom: 80 }}>
       <div style={{
-        background: 'linear-gradient(135deg, #5c1b3f, #aa1c41)', color: '#fff',
-        padding: '16px 16px 20px', margin: '-16px -16px 20px', borderRadius: '0 0 24px 24px',
-        position: 'relative', overflow: 'hidden',
-      }}>
+        background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff',  padding: '16px 16px 20px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)',
+        overflow: 'hidden'}}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: 16, marginBottom: 8, cursor: 'pointer' }}>
           ← Volver
         </button>
-        <div style={{ position: 'absolute', right: -10, top: -10, fontSize: 80, opacity: 0.12 }}>🛍️</div>
         <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#ffe8b4', margin: 0 }}>
           Ropa · Calzado · Accesorios · Perfumes
         </p>
@@ -59,7 +62,7 @@ export default function Tiendas() {
 
       {filtered.length === 0 && (
         <div style={{
-          background: '#fff', borderRadius: 16, padding: 28, gap: 10,
+          background: '#fff', borderRadius: 16, padding: 28, gap: 10, marginBottom: 8,
           display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
           boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #f3f4f6',
         }}>

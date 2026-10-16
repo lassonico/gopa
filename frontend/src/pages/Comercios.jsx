@@ -43,7 +43,15 @@ export default function Comercios() {
 
   return (
     <div className="container" style={{ paddingBottom: 80 }}>
-      <div className="header">
+      <div style={{
+          background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
+          color: '#fff', padding: '16px 16px 20px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          borderBottomLeftRadius:24,
+          borderBottomRightRadius: 24,
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}}>
         <h1>Consumo</h1>
       </div>
 

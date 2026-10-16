@@ -41,8 +41,7 @@ export default function ComerciosNeiva() {
       <div style={{
         background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff',
         padding: '16px 16px 20px', margin: '-16px -16px 20px', borderRadius: '0 0 24px 24px',
-        position: 'relative', overflow: 'hidden',
-      }}>
+        position: 'relative', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)', overflow: 'hidden'}}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', color: '#fff', fontSize: 16, marginBottom: 8 }}>
           ← Volver
         </button>

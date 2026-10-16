@@ -231,8 +231,7 @@ export default function Home() {
       <header style={{
         background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff', padding: '16px 16px 20px',
         position: 'sticky', top: 0, zIndex: 50, borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)',
-      }}> 
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}}> 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ background: '#aa1c41', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
