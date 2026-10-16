@@ -20,7 +20,7 @@ export default function ProductoModal({ producto, comercio, onAdd, onClose }) {
     const marca = '/image/upload/';
     const i = url.indexOf(marca);
     if (i === -1 || url.includes('f_jpg')) return url;
-    return url.slice(0, i + marca.length) + 'w_800,q_auto,f_jpg/' + url.slice(i + marca.length);
+    return url.slice(0, i + marca.length) + 'w_1000,q_auto:good,f_jpg/' + url.slice(i + marca.length);
   };
 
   useEffect(() => {

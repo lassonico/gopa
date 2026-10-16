@@ -67,7 +67,7 @@ export default function ComercioDetail() {
 
   return (
     <div className="container" style={{ paddingBottom: 80 }}>
-      <div style={{ background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: 'var(--white)', padding: 16, margin: '-16px -16px 16px', borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: 'var(--white)', padding: 16, margin: '-16px -16px 16px', borderBottomLeftRadius: 24, borderBottomRightRadius: 24, position: 'sticky', top: 0, zIndex: 50, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', color: 'var(--white)', fontSize: 16, marginBottom: 8 }}>
           ← Volver
         </button>
@@ -89,20 +89,6 @@ export default function ComercioDetail() {
       {comercio.fachada && (
         <img src={comercio.fachada} alt={`Fachada de ${comercio.nombreNegocio}`}
           style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, marginBottom: 16 }} />
-      )}
-
-      {esCiudadNeiva(comercio.ciudad) && (
-        <div style={{
-          background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: 'var(--white)', padding: '10px 14px',
-          borderRadius: 8, marginBottom: 16, fontSize: 13, fontWeight: 600,
-          display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center'
-        }}>
-          <span>📍 Comercios Neiva</span>
-          <span>·</span>
-          <span>Domicilio fijo ${parseFloat(comercio.costoEnvio || 30000).toLocaleString('es-CO')}</span>
-          <span>·</span>
-          <span>Entrega aprox. {formatTiempoEstimado(comercio.tiempoEstimado || 100)}</span>
-        </div>
       )}
 
       {comercio.descripcion && (

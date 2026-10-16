@@ -39,14 +39,13 @@ export default function ComerciosNeiva() {
   return (
     <div className="container" style={{ paddingBottom: 80 }}>
       <div style={{
-        background: 'linear-gradient(135deg, #5c1b3f, #aa1c41)', color: '#fff',
+        background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff',
         padding: '16px 16px 20px', margin: '-16px -16px 20px', borderRadius: '0 0 24px 24px',
         position: 'relative', overflow: 'hidden',
       }}>
         <button onClick={() => navigate(-1)} style={{ background: 'none', color: '#fff', fontSize: 16, marginBottom: 8 }}>
           ← Volver
         </button>
-        <div style={{ position: 'absolute', right: -10, top: -10, fontSize: 80, opacity: 0.12 }}>📍</div>
         <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#ffe8b4', margin: 0 }}>
           Traemos tu pedido desde Neiva
         </p>
