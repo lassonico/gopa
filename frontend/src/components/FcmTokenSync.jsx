@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAuth } from '../App';
-import { refreshFcmToken } from '../services/firebase';
+import { requestFcmToken, refreshFcmToken } from '../services/firebase';
 import { auth as authApi } from '../services/api';
 
 const CLAVE = 'fcmToken';
@@ -13,9 +13,10 @@ export default function FcmTokenSync() {
     if (!user) return undefined;
     let activo = true;
 
-    const sincronizar = async () => {
+    // forzar=true pide una suscripción nueva (al abrir la app); false reutiliza.
+    const sincronizar = async (forzar) => {
       try {
-        const token = await refreshFcmToken();
+        const token = forzar ? await requestFcmToken() : await refreshFcmToken();
         if (!activo || !token) return;
         if (localStorage.getItem(CLAVE) === token) return;
         await authApi.updateFcmToken(token);
@@ -25,13 +26,13 @@ export default function FcmTokenSync() {
       }
     };
 
-    sincronizar();
+    sincronizar(true);
 
     const alVolver = () => {
-      if (document.visibilityState === 'visible') sincronizar();
+      if (document.visibilityState === 'visible') sincronizar(false);
     };
     document.addEventListener('visibilitychange', alVolver);
-    const intervalo = setInterval(sincronizar, INTERVALO_MS);
+    const intervalo = setInterval(() => sincronizar(false), INTERVALO_MS);
 
     return () => {
       activo = false;

@@ -8,6 +8,22 @@ class NotificationService {
     this.initialized = false;
   }
 
+  _esTokenInvalido(error) {
+    const msg = String((error && error.message) || error || '').toLowerCase();
+    return msg.includes('unregistered') || msg.includes('notregistered') ||
+      msg.includes('registration-token-not-registered') || msg.includes('invalid-registration-token');
+  }
+
+  async _limpiarToken(userId) {
+    try {
+      const repository = require('../repositories');
+      await repository.update('Usuarios', userId, { fcmToken: '' });
+      console.log(`Token FCM inválido borrado del usuario ${userId}`);
+    } catch (e) {
+      console.warn(`No se pudo limpiar token de ${userId}: ${e.message}`);
+    }
+  }
+
   _init() {
     if (this.initialized) return;
 
@@ -78,6 +94,7 @@ class NotificationService {
       return { success: true, messageId: response };
     } catch (error) {
       console.error('Error enviando notificación Firebase:', error.message);
+      if (this._esTokenInvalido(error)) await this._limpiarToken(userId);
       return { success: false, error: error.message };
     }
   }

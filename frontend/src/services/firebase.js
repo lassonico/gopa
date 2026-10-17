@@ -40,7 +40,15 @@ export async function requestFcmToken() {
       console.warn('Permiso de notificaciones denegado');
       return null;
     }
+    // Fuerza una suscripción NUEVA: si la actual está vencida, getToken()
+    // devuelve el mismo token muerto (FCM responde "unregistered"). Al
+    // desuscribirnos y volver a pedir, FCM registra una suscripción/token
+    // nuevos y válidos. Solo se hace al iniciar sesión (poco frecuente).
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) await existing.unsubscribe();
     const currentToken = await getToken(messaging, {
+      serviceWorkerRegistration: registration,
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
     });
     if (currentToken) {
