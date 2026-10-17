@@ -43,7 +43,7 @@ export default function Comercios() {
   if (loading || !loaded) return <div className="loading"><Loader /></div>;
 
   return (
-    <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 80px 16px", minHeight: "100vh"}} >
+    <div style={{ maxWidth: 480,  margin: '0 auto', paddingBottom: "80px", minHeight: "100vh"}} >
       <div style={{
           background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
           color: '#fff', padding: '16px 16px 20px',

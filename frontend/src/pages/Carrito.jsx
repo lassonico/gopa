@@ -191,9 +191,21 @@ export default function Carrito() {
 
   if (items.length === 0) {
     return (
-      <div className="container">
-      <div className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Carrito</h1>
+      <div style={{ maxWidth: 480,  margin: '0 auto', paddingBottom: "120px", minHeight: "100vh"}}>
+      <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center', 
+          background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
+          color: '#fff',
+          padding: '16px 16px 20px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          borderBottomLeftRadius: 24,
+          borderBottomRightRadius: 24,
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)'}}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, margin: '4px 0 4px' }} >Carrito</h1>
       </div>
         <div className="empty-state">
           <h3>Carrito vacío</h3>
@@ -205,9 +217,19 @@ export default function Carrito() {
 
   return (
     <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 120px 16px", minHeight: "100vh"}}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)', color: '#fff', padding: '16px 16px 20px',
-        position: 'sticky', top: 0, zIndex: 50, borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)' }}>
+      <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
+          color: '#fff',
+          padding: '16px 16px 20px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          borderBottomLeftRadius: 24,
+          borderBottomRightRadius: 24,
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.32)' }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, margin: '4px 0 4px' }} >Carrito</h1>
         <button onClick={clearCart} style={{
           background: 'none', border: '1px solid var(--gray-300)', borderRadius: 8, padding: '6px 12px',
