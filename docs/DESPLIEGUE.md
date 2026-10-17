@@ -4,6 +4,25 @@ Infra actual: un PC + Docker Compose + túneles Cloudflare (sin orquestador).
 El "canary" aquí es **por audiencia** (equipo valida en verde antes de abrir
 al público), no por porcentaje: los túneles no reparten % entre versiones.
 
+> **ADVERTENCIA (importante):** el stack en vivo corre con
+> `docker-compose.prod.yml`. Si ejecutas `docker compose up` **sin** `-f`,
+> Docker usa `docker-compose.yml` + `docker-compose.override.yml` (config de
+> **desarrollo**) y **recrea el backend** apuntando a la BD local
+> (`host.docker.internal`). Los comercios "desaparecen" de la app (no se
+> borran: el backend lee otra BD). Para evitarlo, usa siempre el script
+> `deploy.sh` o pasa `-f docker-compose.prod.yml` en cada comando.
+
+## Deploy rápido (recomendado)
+
+```bash
+./deploy.sh                  # build + up de todo el stack (producción)
+./deploy.sh frontend         # solo un servicio puntual
+./deploy.sh --no-build       # solo up (sin reconstruir)
+```
+
+El script usa siempre `docker-compose.prod.yml`, espera el health del backend
+(`/api/health`) y valida que `DB_HOST=mysql` antes de dar por bueno el deploy.
+
 ## Requisito previo (una sola vez)
 
 ```powershell
@@ -18,11 +37,11 @@ Cada release: commit + tag (`v1.0.1`, ...) antes de desplegar.
 
 1. Construir en verde (no toca lo que está en vivo):
 ```powershell
-docker compose build
+docker compose -f docker-compose.prod.yml build
 ```
 2. Levantar stack verde en puertos alternos (canary):
 ```powershell
-docker compose -p gopalermo-green up -d
+docker compose -f docker-compose.prod.yml -p gopalermo-green up -d
 # (ajustar puertos si colisionan; ver docker-compose.override.yml de ejemplo)
 ```
 3. Humo en verde (directo, sin túnel):
@@ -32,7 +51,7 @@ curl http://localhost:5173/manifest.webmanifest
 # login de prueba + 1 pedido de prueba
 ```
 4. Validación interna (10–30 min): el equipo usa las URLs verdes.
-5. Corte: apuntar los túneles al stack verde (o `docker compose up -d`
+5. Corte: apuntar los túneles al stack verde (o `./deploy.sh --no-build`
    sobre el proyecto principal) y monitorear `/api/metricas` (errores 5xx,
    p95, cola DLQ).
 6. Si todo OK tras 1–2h: `docker image prune` de versiones viejas
@@ -48,11 +67,13 @@ son opcionales: el código viejo corre bien sobre BD nueva.
 git checkout v1.0.0   # o el tag previo
 
 # 2. Reconstruir y levantar
-docker compose build backend frontend comercio domiciliario admin
-docker compose up -d
+./deploy.sh
+# o, equivalente manual (siempre con -f, nunca sin él):
+# docker compose -f docker-compose.prod.yml build backend frontend comercio domiciliario admin
+# docker compose -f docker-compose.prod.yml up -d
 
 # 3. Verificar
-curl http://localhost:3001/api/health
+./deploy.sh --no-build   # valida health + DB_HOST=mysql
 ```
 
 Si el fallo es solo de frontend, basta `build`+`up -d` de esa app.
