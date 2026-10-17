@@ -216,7 +216,7 @@ export default function Carrito() {
   }
 
   return (
-    <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 120px 16px", minHeight: "100vh"}}>
+    <div style={{ maxWidth: 480,  margin: '0 auto', paddingBottom: "120px", minHeight: "100vh"}}>
       <div style={{
           display: 'flex',
           justifyContent: 'space-between',
