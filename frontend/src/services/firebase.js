@@ -53,6 +53,21 @@ export async function requestFcmToken() {
   }
 }
 
+// Renueva el token sin pedir permiso: solo si ya fue concedido.
+export async function refreshFcmToken() {
+  if (!messaging) return null;
+  if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') return null;
+  try {
+    const currentToken = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+    });
+    return currentToken || null;
+  } catch (error) {
+    console.warn('Error renovando token FCM:', error.message);
+    return null;
+  }
+}
+
 export function onForegroundMessage(callback) {
   if (!messaging) return null;
   return onMessage(messaging, callback);

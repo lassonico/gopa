@@ -31,6 +31,7 @@ import PagoExitoso from './pages/PagoExitoso';
 import NoEncontrado from './pages/NoEncontrado';
 import Layout from './components/Layout';
 import PushListener from './components/PushListener';
+import FcmTokenSync from './components/FcmTokenSync';
 import BannerCookies from './components/BannerCookies';
 import Loader from './components/Loader';
 
@@ -84,12 +85,14 @@ export default function App() {
   const login = (userData, token) => {
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', token);
+    localStorage.removeItem('fcmToken');
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('fcmToken');
     setUser(null);
   };
 
@@ -133,6 +136,7 @@ export default function App() {
         <Route path="*" element={<NoEncontrado />} />
       </Routes>
       <PushListener />
+      <FcmTokenSync />
       <BannerCookies />
       </CartProvider>
       </DataProvider>
