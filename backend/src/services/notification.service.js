@@ -9,8 +9,11 @@ class NotificationService {
   }
 
   _esTokenInvalido(error) {
+    const code = String((error && error.code) || '').toLowerCase();
     const msg = String((error && error.message) || error || '').toLowerCase();
-    return msg.includes('unregistered') || msg.includes('notregistered') ||
+    return code.includes('registration-token-not-registered') ||
+      code.includes('invalid-registration-token') ||
+      msg.includes('unregistered') || msg.includes('notregistered') ||
       msg.includes('registration-token-not-registered') || msg.includes('invalid-registration-token');
   }
 
@@ -22,6 +25,19 @@ class NotificationService {
     } catch (e) {
       console.warn(`No se pudo limpiar token de ${userId}: ${e.message}`);
     }
+  }
+
+  // Envío multicast que limpia los tokens inválidos de cada usuario fallido.
+  async _enviarMulticast(pares, data) {
+    const tokens = pares.map(p => p.token);
+    const response = await this._messaging().sendEachForMulticast({ data, tokens });
+    for (let i = 0; i < response.responses.length; i++) {
+      const r = response.responses[i];
+      if (!r.success && this._esTokenInvalido(r.error)) {
+        await this._limpiarToken(pares[i].userId);
+      }
+    }
+    return response;
   }
 
   _init() {
@@ -121,15 +137,11 @@ class NotificationService {
     try {
       const repository = require('../repositories');
       const users = await repository.findAll('Usuarios');
-      const tokens = users
+      const pares = users
         .filter(u => u.rol === role && u.fcmToken)
-        .map(u => u.fcmToken);
-      if (tokens.length === 0) return { success: false, error: 'Sin tokens' };
-      const message = {
-        data: { title, body, ...data },
-        tokens
-      };
-      const response = await this._messaging().sendEachForMulticast(message);
+        .map(u => ({ userId: u.id, token: u.fcmToken }));
+      if (pares.length === 0) return { success: false, error: 'Sin tokens' };
+      const response = await this._enviarMulticast(pares, { title, body, ...data });
       return { success: true, successCount: response.successCount, failureCount: response.failureCount };
     } catch (error) {
       console.error('Error enviando notificación Firebase:', error.message);
@@ -148,13 +160,9 @@ class NotificationService {
     try {
       const repository = require('../repositories');
       const users = await repository.findAll('Usuarios');
-      const tokens = users.filter(u => u.fcmToken).map(u => u.fcmToken);
-      if (tokens.length === 0) return { success: false, error: 'Sin tokens' };
-      const message = {
-        data: { title, body, ...data },
-        tokens
-      };
-      const response = await this._messaging().sendEachForMulticast(message);
+      const pares = users.filter(u => u.fcmToken).map(u => ({ userId: u.id, token: u.fcmToken }));
+      if (pares.length === 0) return { success: false, error: 'Sin tokens' };
+      const response = await this._enviarMulticast(pares, { title, body, ...data });
       return { success: true, successCount: response.successCount, failureCount: response.failureCount };
     } catch (error) {
       console.error('Error enviando notificación Firebase:', error.message);
