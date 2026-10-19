@@ -1,6 +1,7 @@
 const config = require('../config');
 const fs = require('fs');
 const path = require('path');
+const { parseTokens, serializeTokens, removeToken } = require('../utils/fcmTokens');
 
 class NotificationService {
   constructor() {
@@ -17,10 +18,18 @@ class NotificationService {
       msg.includes('registration-token-not-registered') || msg.includes('invalid-registration-token');
   }
 
-  async _limpiarToken(userId) {
+  // Quita SOLO el token fallido de la lista, conservando los demás
+  // dispositivos de la misma cuenta.
+  async _limpiarToken(userId, token) {
     try {
       const repository = require('../repositories');
-      await repository.update('Usuarios', userId, { fcmToken: '' });
+      const user = await repository.findById('Usuarios', userId);
+      if (!user) return;
+      const tokens = removeToken(user, token);
+      await repository.update('Usuarios', userId, {
+        fcmTokens: serializeTokens(tokens),
+        fcmToken: tokens[tokens.length - 1] || ''
+      });
       console.log(`Token FCM inválido borrado del usuario ${userId}`);
     } catch (e) {
       console.warn(`No se pudo limpiar token de ${userId}: ${e.message}`);
@@ -34,7 +43,7 @@ class NotificationService {
     for (let i = 0; i < response.responses.length; i++) {
       const r = response.responses[i];
       if (!r.success && this._esTokenInvalido(r.error)) {
-        await this._limpiarToken(pares[i].userId);
+        await this._limpiarToken(pares[i].userId, pares[i].token);
       }
     }
     return response;
@@ -96,21 +105,20 @@ class NotificationService {
     }
     try {
       const repository = require('../repositories');
-      const users = await repository.findAll('Usuarios');
-      const user = users.find(u => u.id === userId);
-      if (!user?.fcmToken) {
+      const user = await repository.findById('Usuarios', userId);
+      const tokens = parseTokens(user);
+      if (tokens.length === 0) {
         console.log(`Usuario ${userId} sin token FCM`);
         return { success: false, error: 'Sin token FCM' };
       }
-      const message = {
-        data: { title, body, ...data },
-        token: user.fcmToken
-      };
-      const response = await this._messaging().send(message);
-      return { success: true, messageId: response };
+      const pares = tokens.map(token => ({ userId, token }));
+      const response = await this._enviarMulticast(pares, { title, body, ...data });
+      if (response.successCount > 0) {
+        return { success: true, successCount: response.successCount, failureCount: response.failureCount };
+      }
+      return { success: false, error: 'Ningún token válido', failureCount: response.failureCount };
     } catch (error) {
       console.error('Error enviando notificación Firebase:', error.message);
-      if (this._esTokenInvalido(error)) await this._limpiarToken(userId);
       return { success: false, error: error.message };
     }
   }
@@ -137,9 +145,11 @@ class NotificationService {
     try {
       const repository = require('../repositories');
       const users = await repository.findAll('Usuarios');
-      const pares = users
-        .filter(u => u.rol === role && u.fcmToken)
-        .map(u => ({ userId: u.id, token: u.fcmToken }));
+      const pares = [];
+      for (const u of users) {
+        if (u.rol !== role) continue;
+        for (const token of parseTokens(u)) pares.push({ userId: u.id, token });
+      }
       if (pares.length === 0) return { success: false, error: 'Sin tokens' };
       const response = await this._enviarMulticast(pares, { title, body, ...data });
       return { success: true, successCount: response.successCount, failureCount: response.failureCount };
@@ -160,7 +170,10 @@ class NotificationService {
     try {
       const repository = require('../repositories');
       const users = await repository.findAll('Usuarios');
-      const pares = users.filter(u => u.fcmToken).map(u => ({ userId: u.id, token: u.fcmToken }));
+      const pares = [];
+      for (const u of users) {
+        for (const token of parseTokens(u)) pares.push({ userId: u.id, token });
+      }
       if (pares.length === 0) return { success: false, error: 'Sin tokens' };
       const response = await this._enviarMulticast(pares, { title, body, ...data });
       return { success: true, successCount: response.successCount, failureCount: response.failureCount };

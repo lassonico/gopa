@@ -4,7 +4,9 @@ import { requestFcmToken, refreshFcmToken } from '../services/firebase';
 import { auth as authApi } from '../services/api';
 
 const CLAVE = 'fcmToken';
+const CLAVE_FORZADO = 'fcmForzadoEn';
 const INTERVALO_MS = 6 * 60 * 60 * 1000;
+const FORZAR_CADA_MS = 24 * 60 * 60 * 1000;
 
 export default function FcmTokenSync() {
   const { user } = useAuth();
@@ -13,11 +15,15 @@ export default function FcmTokenSync() {
     if (!user) return undefined;
     let activo = true;
 
-    // forzar=true pide una suscripción nueva (al abrir la app); false reutiliza.
-    const sincronizar = async (forzar) => {
+    // forzar=true recrea la suscripción (recupera tokens muertos), pero con
+    // límite de 1 vez al día para no generar tokens basura en cada apertura.
+    const sincronizar = async (permitirForzar) => {
       try {
-        const token = forzar ? await requestFcmToken() : await refreshFcmToken();
+        const ultimoForzado = Number(localStorage.getItem(CLAVE_FORZADO) || 0);
+        const debeForzar = permitirForzar && Date.now() - ultimoForzado > FORZAR_CADA_MS;
+        const token = debeForzar ? await requestFcmToken() : await refreshFcmToken();
         if (!activo || !token) return;
+        if (debeForzar) localStorage.setItem(CLAVE_FORZADO, String(Date.now()));
         if (localStorage.getItem(CLAVE) === token) return;
         await authApi.updateFcmToken(token);
         localStorage.setItem(CLAVE, token);

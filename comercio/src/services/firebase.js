@@ -27,12 +27,34 @@ export async function requestFcmToken() {
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') return null;
+    // Fuerza una suscripción NUEVA: si la actual quedó vencida (FCM responde
+    // "unregistered"), getToken() devuelve el mismo token muerto. Al
+    // desuscribirnos y volver a pedir, FCM registra un token válido.
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) await existing.unsubscribe();
+    const currentToken = await getToken(messaging, {
+      serviceWorkerRegistration: registration,
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
+    });
+    return currentToken || null;
+  } catch (error) {
+    console.error('Error obteniendo token FCM:', error.message);
+    return null;
+  }
+}
+
+// Renueva el token sin pedir permiso ni recrear la suscripción.
+export async function refreshFcmToken() {
+  if (!messaging) return null;
+  if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') return null;
+  try {
     const currentToken = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
     });
-    return currentToken;
+    return currentToken || null;
   } catch (error) {
-    console.error('Error obteniendo token FCM:', error.message);
+    console.warn('Error renovando token FCM:', error.message);
     return null;
   }
 }

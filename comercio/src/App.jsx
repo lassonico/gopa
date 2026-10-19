@@ -14,6 +14,7 @@ import Anuncios from './pages/Anuncios';
 import AnuncioRetorno from './pages/AnuncioRetorno';
 import NoEncontrado from './pages/NoEncontrado';
 import PushListener from './components/PushListener';
+import FcmTokenSync from './components/FcmTokenSync';
 import Loader from './components/Loader';
 
 export const AuthContext = createContext(null);
@@ -102,6 +103,7 @@ export default function App() {
         </Routes>
       )}
       <PushListener />
+      <FcmTokenSync />
     </AuthContext.Provider>
   );
 }

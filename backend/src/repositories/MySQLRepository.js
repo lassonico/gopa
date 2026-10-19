@@ -81,6 +81,7 @@ class MySQLRepository {
         calificacionPromedio DECIMAL(3,2) DEFAULT 0.00,
         totalCalificaciones INT DEFAULT 0,
         fcmToken TEXT,
+        fcmTokens TEXT,
         refreshToken VARCHAR(500) DEFAULT ''
       )`,
       `CREATE TABLE IF NOT EXISTS Comercios (
@@ -315,6 +316,7 @@ class MySQLRepository {
       `ALTER TABLE Usuarios ADD COLUMN IF NOT EXISTS codigoSmsTelefono VARCHAR(20) DEFAULT ''`,
       `ALTER TABLE Usuarios ADD COLUMN IF NOT EXISTS terminosVersion VARCHAR(20) DEFAULT ''`,
       `ALTER TABLE Usuarios ADD COLUMN IF NOT EXISTS terminosFecha VARCHAR(40) DEFAULT ''`,
+      `ALTER TABLE Usuarios ADD COLUMN IF NOT EXISTS fcmTokens TEXT`,
       `UPDATE Usuarios SET activo = 1 WHERE BINARY activo = 'true'`,
       `UPDATE Usuarios SET activo = 0 WHERE BINARY activo = 'false' OR activo IS NULL OR BINARY activo = ''`,
       `UPDATE Usuarios SET disponible = 1 WHERE BINARY disponible = 'true'`,
@@ -414,14 +416,22 @@ class MySQLRepository {
       )`,
       `CREATE INDEX IF NOT EXISTS idx_trabajos_tipo ON TrabajosFallidos(tipo)`,
     ];
-    try {
-      const [cols] = await pool.execute(
-        `SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Usuarios' AND COLUMN_NAME = 'resetTokenExpiresAt'`
-      );
-      if (Number(cols[0].c) === 0) {
-        await pool.execute(`ALTER TABLE Usuarios ADD COLUMN resetTokenExpiresAt VARCHAR(40) DEFAULT ''`);
-      }
-    } catch {}
+    // MySQL 8 no soporta "ADD COLUMN IF NOT EXISTS": se agrega solo si falta.
+    const addIfMissing = [
+      ['resetTokenExpiresAt', `VARCHAR(40) DEFAULT ''`],
+      ['fcmTokens', `TEXT`],
+    ];
+    for (const [col, def] of addIfMissing) {
+      try {
+        const [cols] = await pool.execute(
+          `SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Usuarios' AND COLUMN_NAME = ?`,
+          [col]
+        );
+        if (Number(cols[0].c) === 0) {
+          await pool.execute(`ALTER TABLE Usuarios ADD COLUMN \`${col}\` ${def}`);
+        }
+      } catch {}
+    }
     for (const sql of migrations) {
       try { await pool.execute(sql); } catch {}
     }

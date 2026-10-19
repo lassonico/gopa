@@ -253,3 +253,31 @@ describe('Auth - recuperación de contraseña', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('Auth - tokens FCM multi-dispositivo', () => {
+  it('acumula varios tokens sin pisar los de otros dispositivos', async () => {
+    const app = buildApp();
+    const repo = (await import('../repositories/index.js')).default;
+    await seedUser(repo, { id: 'test-user-id', email: 'test@example.com' });
+
+    const tokenWeb = 'w'.repeat(120);
+    const tokenCelular = 'c'.repeat(120);
+
+    const r1 = await request(app)
+      .put('/api/auth/fcm-token')
+      .set('Authorization', `Bearer ${global.generateTestToken()}`)
+      .send({ fcmToken: tokenWeb });
+    expect(r1.status).toBe(200);
+
+    const r2 = await request(app)
+      .put('/api/auth/fcm-token')
+      .set('Authorization', `Bearer ${global.generateTestToken()}`)
+      .send({ fcmToken: tokenCelular });
+    expect(r2.status).toBe(200);
+
+    const user = await repo.findById('Usuarios', 'test-user-id');
+    const tokens = JSON.parse(user.fcmTokens);
+    expect(tokens).toContain(tokenWeb);
+    expect(tokens).toContain(tokenCelular);
+  });
+});

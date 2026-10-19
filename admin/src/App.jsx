@@ -22,6 +22,8 @@ import Tarifas from './pages/Tarifas';
 import NoEncontrado from './pages/NoEncontrado';
 import Sidebar from './components/Sidebar';
 import Loader from './components/Loader';
+import FcmTokenSync from './components/FcmTokenSync';
+import PushListener from './components/PushListener';
 
 export const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
@@ -96,6 +98,8 @@ export default function App() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       )}
+      <FcmTokenSync />
+      <PushListener />
     </AuthContext.Provider>
   );
 }

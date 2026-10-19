@@ -13,10 +13,24 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  const notificationTitle = payload.notification?.title || 'Nueva notificación';
+  const data = payload.data || {};
+  const notificationTitle = data.title || payload.notification?.title || 'Nueva notificación';
   const notificationOptions = {
-    body: payload.notification?.body || '',
+    body: data.body || payload.notification?.body || '',
     icon: '/favicon.ico',
+    data: data,
   };
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      for (const client of clientList) {
+        if ('focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow('/');
+    })
+  );
 });

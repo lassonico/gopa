@@ -7,6 +7,7 @@ const { generateId, generateToken } = require('../../utils/helpers');
 const { cola } = require('../../services/cola.service');
 const emailService = require('../../services/email.service');
 const { validatePasswordStrength, checkPasswordBreach, validatePasswordChange } = require('../../utils/passwordPolicy');
+const { addToken, serializeTokens } = require('../../utils/fcmTokens');
 
 const googleClient = new OAuth2Client(config.google.oauthClientId);
 
@@ -483,7 +484,15 @@ exports.updateFcmToken = async (req, res, next) => {
     if (!fcmToken) {
       return res.status(400).json({ error: 'fcmToken requerido' });
     }
-    await repository.update(SHEET_USERS, req.user.id, { fcmToken });
+    // Multi-dispositivo: se agrega el token a la lista del usuario (no pisa
+    // el de otros dispositivos de la misma cuenta). `fcmToken` queda como el
+    // último registrado, por compatibilidad con lectores antiguos.
+    const user = await repository.findById(SHEET_USERS, req.user.id);
+    const tokens = addToken(user, fcmToken);
+    await repository.update(SHEET_USERS, req.user.id, {
+      fcmTokens: serializeTokens(tokens),
+      fcmToken: tokens[tokens.length - 1] || ''
+    });
     res.json({ message: 'Token FCM actualizado' });
   } catch (error) {
     next(error);
