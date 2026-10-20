@@ -12,6 +12,9 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+self.addEventListener('install', function() { self.skipWaiting(); });
+self.addEventListener('activate', function(event) { event.waitUntil(self.clients.claim()); });
+
 messaging.onBackgroundMessage(function(payload) {
   const data = payload.data || {};
   const notificationTitle = data.title || payload.notification?.title || 'Nueva notificación';

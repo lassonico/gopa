@@ -62,11 +62,16 @@ export async function requestFcmToken() {
 }
 
 // Renueva el token sin pedir permiso: solo si ya fue concedido.
+// SIEMPRE usa la registration de firebase-messaging-sw.js: si no se indica,
+// getToken cae en el service worker del PWA (sw.js), que no muestra notificaciones
+// y por eso el push termina en el aviso genérico "Este sitio se actualizó en segundo plano".
 export async function refreshFcmToken() {
   if (!messaging) return null;
   if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') return null;
   try {
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
     const currentToken = await getToken(messaging, {
+      serviceWorkerRegistration: registration,
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
     });
     return currentToken || null;
