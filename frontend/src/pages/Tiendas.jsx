@@ -20,11 +20,11 @@ export default function Tiendas() {
   useEffect(() => {
     comercios.getAll()
       .then(({ data }) => setList(
-        (Array.isArray(data) ? data : []).filter(c => esComercioTienda(c) && !esCiudadNeiva(c.ciudad))
+        (Array.isArray(data) ? data : []).filter(c => esComercioTienda(c, cats) && !esCiudadNeiva(c.ciudad))
       ))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [cats]);
 
   useEffect(() => {
     if (!catFilter) { setSubActiva('Todas'); return; }

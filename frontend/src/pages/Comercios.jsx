@@ -32,7 +32,7 @@ export default function Comercios() {
     setSubActiva(match ? match.nombre : catFilter);
   }, [catFilter, cats]);
 
-  const base = list.filter(c => !esCiudadNeiva(c.ciudad) && !esComercioTienda(c));
+  const base = list.filter(c => !esCiudadNeiva(c.ciudad) && !esComercioTienda(c, cats));
   const esSubFija = subs.some(s => s.nombre === subActiva);
   const filtered = !subActiva || subActiva === 'Todas'
     ? (catFilter && !esSubFija

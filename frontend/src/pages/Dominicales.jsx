@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { comercios } from '../services/api';
+import { useData } from '../contexts/DataContext';
 import Loader from '../components/Loader';
 import { esComercioTienda } from '../utils/tiendas';
 import { esCiudadNeiva } from '../utils/formatTiempo';
@@ -24,6 +25,7 @@ function abreDomingo(horarios) {
 
 export default function Dominicales() {
   const navigate = useNavigate();
+  const { categoriasList: cats } = useData();
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,13 +33,13 @@ export default function Dominicales() {
     comercios.getAll()
       .then(({ data }) => setList(
         (Array.isArray(data) ? data : []).filter(c =>
-          !esCiudadNeiva(c.ciudad) && !esComercioTienda(c) &&
+          !esCiudadNeiva(c.ciudad) && !esComercioTienda(c, cats) &&
           (c.dominical === 'true' || abreDomingo(c.horarios))
         )
       ))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [cats]);
 
   if (loading) return <div className="loading"><Loader /></div>;
 

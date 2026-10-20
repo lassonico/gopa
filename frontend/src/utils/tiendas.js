@@ -36,8 +36,25 @@ export const TIENDAS_SUBS = [
 const CATEGORIAS_TIENDA_EXTRA = [
   'tienda', 'tiendas', 'joyeria', 'relojeria', 'belleza', 'cosmeticos',
   'electronica', 'tecnologia', 'celulares', 'deportes', 'jugueteria',
-  'papeleria', 'hogar', 'decoracion',
+  'papeleria', 'hogar', 'decoracion', 'variedades', 'electricos', 'mascotas',
 ];
+
+// Mapa nombre→grupo de la tabla categorias (BD), cacheado por lista.
+// La BD es la fuente de verdad: si una categoría está allí, su grupo manda
+// y no se depende de listas hardcodeadas que se desincronizan.
+const cacheGrupo = new WeakMap();
+function mapaGrupo(catList) {
+  if (!Array.isArray(catList)) return null;
+  let m = cacheGrupo.get(catList);
+  if (!m) {
+    m = new Map();
+    for (const c of catList) {
+      if (c?.nombre) m.set(normalizar(c.nombre), normalizar(c.grupo));
+    }
+    cacheGrupo.set(catList, m);
+  }
+  return m;
+}
 
 function coincideSub(sub, categoria) {
   const n = normalizar(categoria);
@@ -47,7 +64,11 @@ function coincideSub(sub, categoria) {
 }
 
 // ¿La categoría pertenece al grupo Consumo?
-export function esCategoriaConsumo(categoria) {
+export function esCategoriaConsumo(categoria, catList) {
+  const n = normalizar(categoria);
+  if (!n) return false;
+  const g = mapaGrupo(catList)?.get(n);
+  if (g) return g === 'consumo';
   return CONSUMO_SUBS.some(s => coincideSub(s, categoria));
 }
 
@@ -75,16 +96,18 @@ export function coincideSubLista(subs, categoria) {
 }
 
 // ¿La categoría pertenece al grupo Tiendas?
-export function esCategoriaTienda(categoria) {
+export function esCategoriaTienda(categoria, catList) {
   const n = normalizar(categoria);
   if (!n) return false;
+  const g = mapaGrupo(catList)?.get(n);
+  if (g) return g === 'tiendas';
   if (n.includes('tiend')) return true;
   if (TIENDAS_SUBS.some(s => coincideSub(s, categoria))) return true;
   return CATEGORIAS_TIENDA_EXTRA.includes(n);
 }
 
-export function esComercioTienda(comercio) {
-  return esCategoriaTienda(comercio?.categoria);
+export function esComercioTienda(comercio, catList) {
+  return esCategoriaTienda(comercio?.categoria, catList);
 }
 
 // Subcategoría Consumo exacta de un comercio (o null)

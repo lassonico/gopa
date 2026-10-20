@@ -233,7 +233,7 @@ export default function SolicitarRegistro() {
     dominicales: CONSUMO_SUBS,
   };
   const NOMBRES_GRUPO = { consumo: 'Consumo (comidas)', tiendas: 'Tiendas', dominicales: 'Especiales dominicales' };
-  const esTienda = grupoCategoria === 'tiendas' || esCategoriaTienda(form.categoria);
+  const esTienda = grupoCategoria === 'tiendas' || esCategoriaTienda(form.categoria, catList);
 
   const handleGrupoChange = (e) => {
     const grupo = e.target.value;

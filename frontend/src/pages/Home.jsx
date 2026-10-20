@@ -28,7 +28,7 @@ const normalizar = (str = '') =>
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { promos, loaded } = useData();
+  const { promos, loaded, categoriasList } = useData();
   const [comerciosList, setComerciosList] = useState([]);
   const [productosList, setProductosList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,11 +139,11 @@ export default function Home() {
 
     return {
       comercios: [],
-      consumo: sort(comScores.filter(c => !esComercioTienda(c))),
-      tiendas: sort(comScores.filter(c => esComercioTienda(c))),
+      consumo: sort(comScores.filter(c => !esComercioTienda(c, categoriasList))),
+      tiendas: sort(comScores.filter(c => esComercioTienda(c, categoriasList))),
       productos: sort(prodScores),
     };
-  }, [searchTerm, index, comerciosList]);
+  }, [searchTerm, index, comerciosList, categoriasList]);
 
   // Si un grupo viene vacío, llevar el tab al grupo con resultados
   useEffect(() => {
