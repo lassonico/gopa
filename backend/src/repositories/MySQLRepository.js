@@ -638,6 +638,11 @@ class MySQLRepository {
   _toMySQLValue(table, data) {
     const boolFields = ['activo', 'destacado', 'visible', 'leida', 'enviadoFirebase', 'soloNuevos', 'disponible', 'verificado', 'usado'];
     const out = { ...data };
+    // undefined = "campo no enviado": se omite para que mysql2 no truene con
+    // "Bind parameters must not contain undefined" y la columna use su DEFAULT.
+    for (const key of Object.keys(out)) {
+      if (out[key] === undefined) delete out[key];
+    }
     for (const field of boolFields) {
       if (out[field] !== undefined && out[field] !== null) {
         out[field] = out[field] === true || out[field] === 'true' || out[field] === 1 || out[field] === '1' ? 1 : 0;
@@ -664,20 +669,32 @@ class MySQLRepository {
     return value;
   }
 
-  // Columnas reales por tabla (cacheadas). Sirve para que un payload con
-  // campos extra no reviente el INSERT/UPDATE con "Unknown column": se
-  // descartan en lugar de romper la operación completa.
+  // Columnas reales por tabla (cacheadas, con su tipo). Sirve para que un
+  // payload con campos extra no reviente el INSERT/UPDATE con "Unknown
+  // column" (se descartan) y para normalizar valores según el tipo.
   async _knownColumns(pool, table) {
     if (!this._cols) this._cols = new Map();
     if (this._cols.has(table)) return this._cols.get(table);
     try {
       const [rows] = await pool.query(`SHOW COLUMNS FROM \`${table}\``);
-      const set = new Set(rows.map(r => r.Field));
-      this._cols.set(table, set);
-      return set;
+      const map = new Map(rows.map(r => [r.Field, r.Type]));
+      this._cols.set(table, map);
+      return map;
     } catch {
       return null;
     }
+  }
+
+  // '' no es válido en columnas de fecha/hora de MySQL (modo estricto):
+  // revienta con "Incorrect datetime value: ''". Se envía NULL en su lugar
+  // ("fecha no registrada aún"). Así cualquier controlador puede usar ''
+  // sin que el INSERT/UPDATE reviente.
+  _bindValue(type, value) {
+    if (value === '' && typeof type === 'string' &&
+        /^(datetime|date|timestamp|time|year)/i.test(type)) {
+      return null;
+    }
+    return value;
   }
 
   async create(table, data) {
@@ -688,7 +705,7 @@ class MySQLRepository {
     const keys = known ? Object.keys(clean).filter(k => known.has(k)) : Object.keys(clean);
     if (keys.length === 0) throw new Error(`No hay campos válidos para crear en ${table}`);
     keys.forEach(k => assertIdent(k, 'columna'));
-    const values = keys.map(k => clean[k]);
+    const values = keys.map(k => this._bindValue(known && known.get(k), clean[k]));
     const placeholders = keys.map(() => '?').join(', ');
     const columns = keys.map(k => `\`${k}\``).join(', ');
     await pool.execute(
@@ -706,7 +723,7 @@ class MySQLRepository {
     const keys = known ? Object.keys(clean).filter(k => known.has(k)) : Object.keys(clean);
     if (keys.length === 0) throw new Error('No hay campos para actualizar');
     keys.forEach(k => assertIdent(k, 'columna'));
-    const values = keys.map(k => clean[k]);
+    const values = keys.map(k => this._bindValue(known && known.get(k), clean[k]));
     const setClause = keys.map(k => `\`${k}\` = ?`).join(', ');
     const [result] = await pool.execute(
       `UPDATE \`${table}\` SET ${setClause} WHERE id = ?`,

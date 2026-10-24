@@ -323,20 +323,20 @@ export default function Home() {
                         cursor: promo.comercioId || promo.link ? 'pointer' : 'default',
                       }}
                     >
-                      <div style={{ padding: 20, color: '#fff', background: 'rgba(0,0,0,0.2)', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ padding: 20, color: '#fff', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <span style={{
                           background: '#ffe8b4', color: '#5e244e', fontSize: 10, fontWeight: 700,
                           padding: '4px 8px', borderRadius: 9999, textTransform: 'uppercase', letterSpacing: '0.05em', alignSelf: 'flex-start',
                         }}>
                           {promo.tipo === 'banner' ? 'Anuncio' : 'Oferta Especial'}
                         </span>
-                        <p style={{ fontSize: 24, fontWeight: 700, marginTop: 8, marginBottom: 0, lineHeight: 1.2 }}>{promo.titulo}</p>
+                        <p style={{ fontSize: 20, fontWeight: 600, marginTop: 8, marginBottom: 0, lineHeight: 1.2 }}>{promo.titulo}</p>
                         <p style={{ fontSize: 13, opacity: 0.9, marginTop: 4 }}>{promo.descripcion}</p>
                         <span style={{
                           marginTop: 16, background: '#5e244e', color: '#fff', fontSize: 13,
                           fontWeight: 600, padding: '8px 16px', borderRadius: 9999, alignSelf: 'flex-start',
                         }}>
-                          {promo.comercioId || promo.link ? 'Pedir Ahora' : 'Ver más'}
+                          {promo.comercioId || promo.link ? 'Pedir' : 'Ver más'}
                         </span>
                       </div>
                     </div>
@@ -626,8 +626,8 @@ export default function Home() {
 
         <div style={{ textAlign: 'center', marginTop: 32, marginBottom: 8 }}>
           <img src="/GoPalermoOscuro.svg" alt="GoPalermo" style={{ maxWidth: '80%', height: 'auto' }} />
-          <p style={{ fontSize: 11, color: '#9ca3af', margin: '8px 0 0' }}>
-            Hecha con ayuda de IA 🤖
+          <p style={{ fontSize: 10, color: '#9ca3af', margin: '8px 0 0' }}>
+            Hecha con apoyo de IA 🤖
           </p>
         </div>
       </main>

@@ -73,7 +73,7 @@ export default function Tiendas() {
           </p>
         </div>
       )}
-      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 8 }}>
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding:"16px", marginBottom: 8 }}>
         {['Todas', ...subs.map(s => s.nombre)].map(nombre => {
           const activa = subActiva === nombre;
           const sub = subs.find(s => s.nombre === nombre);
@@ -90,7 +90,7 @@ export default function Tiendas() {
         })}
       </div>
       {filtered.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: "0 16px" }}>
           {filtered.map(com => (
             <Link key={com.id} to={`/comercios/${com.id}`} style={{ textDecoration: 'none' }}>
               <div style={{

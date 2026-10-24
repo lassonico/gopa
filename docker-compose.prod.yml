@@ -50,7 +50,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
     networks:
       - domicilios-network
 
@@ -64,7 +64,7 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -91,7 +91,7 @@ services:
       - comercio
       - admin
       - domiciliario
-    restart: unless-stopped
+    restart: always
     networks:
       - domicilios-network
 
@@ -99,6 +99,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    restart: always
     networks:
       - domicilios-network
 
@@ -106,6 +107,7 @@ services:
     build:
       context: ./comercio
       dockerfile: Dockerfile
+    restart: always
     networks:
       - domicilios-network
 
@@ -113,6 +115,7 @@ services:
     build:
       context: ./admin
       dockerfile: Dockerfile
+    restart: always
     networks:
       - domicilios-network
 
@@ -120,6 +123,7 @@ services:
     build:
       context: ./domiciliario
       dockerfile: Dockerfile
+    restart: always
     networks:
       - domicilios-network
 

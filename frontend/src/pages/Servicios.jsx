@@ -9,10 +9,12 @@ export default function Servicios() {
   if (!loaded) return <div className="loading"><Loader /></div>;
 
   return (
-    <div style={{ maxWidth: 480,  margin: '0 auto', padding: "0 16px 80px 16px", minHeight: "100vh"}}>
+    <div style={{ maxWidth: 480,  margin: '0 auto', paddingBottom: 80, minHeight: "100vh"}}>
       <div style={{
         background: 'linear-gradient(to bottom, #6c234b 0%, #961e44 50%, #ee6a2d 100%)',
-        color: '#fff',  padding: '16px 16px 20px',
+        color: '#fff',
+        padding: '16px 16px 20px',
+        marginBottom: 16,
         position: 'sticky',
         top: 0,
         zIndex: 50,
@@ -47,7 +49,7 @@ export default function Servicios() {
         </div>
       )}
       {serviciosList.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '0 16px' }}>
           {serviciosList.map(s => (
             <div key={s.id} role="link" tabIndex={0} aria-label={`Ver servicio ${s.nombre}`}
               onClick={() => navigate(`/servicios/${s.id}`)}

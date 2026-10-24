@@ -163,7 +163,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#ffffff', marginBottom: 6, marginLeft: 4 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#fee7b3', marginBottom: 6, marginLeft: 4 }}>
               Correo electrónico
             </label>
             <div style={{ position: 'relative' }}>
@@ -182,7 +182,7 @@ export default function Login() {
 
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, marginLeft: 4, marginRight: 4 }}>
-              <label style={{ fontSize: 13, fontWeight: 500, color: '#ffffff' }}>Contraseña</label>
+              <label style={{ fontSize: 13, fontWeight: 500, color: '#fee7b3' }}>Password</label>
               <Link to="/olvide-password" style={{ fontSize: 12, color: '#E58357', fontWeight: 500 }}>¿Olvidaste tu contraseña?</Link>
             </div>
             <div style={{ position: 'relative' }}>
@@ -213,7 +213,7 @@ export default function Login() {
             type="submit" disabled={loading || (TURNSTILE_ENABLED && !turnstileToken)}
             style={{
               width: '100%', padding: '14px 16px', borderRadius: 12,
-              background: '#e58357', color: '#fff',
+              background: '#fee7b3', color: '#961e44',
               fontSize: 15, fontWeight: 600, border: 'none', cursor: loading ? 'not-allowed' : (TURNSTILE_ENABLED && !turnstileToken) ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s', marginTop: 8, opacity: (TURNSTILE_ENABLED && !turnstileToken) ? 0.6 : 1,
             }}
@@ -224,7 +224,7 @@ export default function Login() {
 
         <p style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: '#f0e6ee' }}>
           ¿No tienes una cuenta?{' '}
-          <Link to="/register" style={{ color: '#E58357', fontWeight: 600, textDecoration: 'none' }}>
+          <Link to="/register" style={{ color: '#fee7b3', fontWeight: 600, textDecoration: 'none' }}>
             Regístrate gratis
           </Link>
         </p>

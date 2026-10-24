@@ -84,7 +84,7 @@ export default function Comercios() {
         </div>
       ) : filtered.map(com => (
         <Link key={com.id} to={`/comercios/${com.id}`} style={{ textDecoration: 'none' }}>
-          <div className="card" style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div className="card" style={{ marginBottom: 8, display: 'flex', gap: 12, alignItems: 'center', padding: "0 16px" }}>
             <div style={{
               width: 56, height: 56, borderRadius: 12, background: 'var(--gray-200)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,

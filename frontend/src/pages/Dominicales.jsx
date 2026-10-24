@@ -76,7 +76,7 @@ export default function Dominicales() {
         </div>
       )}
       {list.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: "0 16px" }}>
           {list.map(com => (
             <Link key={com.id} to={`/comercios/${com.id}`} style={{ textDecoration: 'none' }}>
               <div style={{
