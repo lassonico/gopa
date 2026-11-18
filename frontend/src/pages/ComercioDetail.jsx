@@ -88,7 +88,7 @@ export default function ComercioDetail() {
 
       {comercio.fachada && (
         <img src={comercio.fachada} alt={`Fachada de ${comercio.nombreNegocio}`}
-          style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 12, marginBottom: 16 }} />
+          style={{ width: '100%', height: 160, objectFit: 'cover', objectPosition: 'center', borderRadius: 12, marginBottom: 16 }} />
       )}
 
       {comercio.descripcion && (

@@ -125,7 +125,7 @@ export default function Login() {
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <img src={logo} alt="GoPalermo" style={{ width: 250, height: 'auto', marginBottom: 16 }} />
           <h1 style={{ color: '#fee7b3', fontSize: 20, fontWeight: 700, marginBottom: 8 }}>
-            Plermo en un solo lugar
+            Palermo en un solo lugar
           </h1>
           <p style={{ color: '#fee7b3', fontSize: 14 }}>
             Inicia sesion
