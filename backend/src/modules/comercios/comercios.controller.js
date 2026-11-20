@@ -31,7 +31,7 @@ exports.getAllAdmin = async (req, res, next) => {
     ]);
     const result = comercios.map(c => {
       const user = users.find(u => u.comercioId === c.id);
-      return { ...c, email: user?.email || '' };
+      return { ...c, email: user?.email || c.email || '' };
     });
     res.json(result);
   } catch (error) {
@@ -78,6 +78,7 @@ exports.create = async (req, res, next) => {
       nombreNegocio,
       nombrePropietario,
       telefono,
+      email: email ? String(email).toLowerCase().trim() : '',
       direccion: direccion || '',
       horarios: horarios || '',
       categoria: categoria || '',
@@ -140,7 +141,7 @@ exports.solicitarRegistro = async (req, res, next) => {
   try {
     const body = req.validatedBody || req.body;
     const {
-      nombreNegocio, nombrePropietario, telefono, direccion,
+      nombreNegocio, nombrePropietario, telefono, email, direccion,
       horarios, categoria, redesSociales, descripcion, logo,
       fotografias, productosPrincipales, cobraEmpaque, tipoEmpaque, valorEmpaque
     } = body;
@@ -153,6 +154,7 @@ exports.solicitarRegistro = async (req, res, next) => {
       nombreNegocio,
       nombrePropietario,
       telefono,
+      email: email ? String(email).toLowerCase().trim() : '',
       direccion,
       horarios: horarios || '',
       categoria: categoria || '',
@@ -243,6 +245,11 @@ exports.update = async (req, res, next) => {
             activo: 'true',
             fechaRegistro: fmt()
           });
+        }
+        // Persistir el correo también en el comercio para que no se pierda
+        // mientras no exista (o antes de aceptar) la cuenta vinculada.
+        if (emailNorm) {
+          await repository.update(SHEET, req.params.id, { email: emailNorm });
         }
       } else if (password && user) {
         await repository.update('Usuarios', user.id, {

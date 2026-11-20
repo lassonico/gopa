@@ -89,6 +89,7 @@ class MySQLRepository {
         nombreNegocio VARCHAR(255) NOT NULL DEFAULT '',
         nombrePropietario VARCHAR(255) DEFAULT '',
         telefono VARCHAR(50) DEFAULT '',
+        email VARCHAR(255) DEFAULT '',
         direccion TEXT,
         horarios VARCHAR(255) DEFAULT '',
         categoria VARCHAR(100) DEFAULT '',
@@ -418,17 +419,18 @@ class MySQLRepository {
     ];
     // MySQL 8 no soporta "ADD COLUMN IF NOT EXISTS": se agrega solo si falta.
     const addIfMissing = [
-      ['resetTokenExpiresAt', `VARCHAR(40) DEFAULT ''`],
-      ['fcmTokens', `TEXT`],
+      ['Usuarios', 'resetTokenExpiresAt', `VARCHAR(40) DEFAULT ''`],
+      ['Usuarios', 'fcmTokens', `TEXT`],
+      ['Comercios', 'email', `VARCHAR(255) DEFAULT ''`],
     ];
-    for (const [col, def] of addIfMissing) {
+    for (const [table, col, def] of addIfMissing) {
       try {
         const [cols] = await pool.execute(
-          `SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Usuarios' AND COLUMN_NAME = ?`,
-          [col]
+          `SELECT COUNT(*) AS c FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+          [table, col]
         );
         if (Number(cols[0].c) === 0) {
-          await pool.execute(`ALTER TABLE Usuarios ADD COLUMN \`${col}\` ${def}`);
+          await pool.execute(`ALTER TABLE \`${table}\` ADD COLUMN \`${col}\` ${def}`);
         }
       } catch {}
     }

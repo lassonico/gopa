@@ -299,9 +299,11 @@ exports.aprobar = async (req, res, next) => {
 
     if (solicitud.tipo === 'registro_comercio') {
       const datos = JSON.parse(solicitud.datos);
+      const emailComercio = String(datos.email || datos.cuentaEmail || '').toLowerCase().trim();
       const comercio = {
         id: generateId(),
         ...datos,
+        email: emailComercio,
         estado: 'aprobado',
         activo: 'true',
         fechaRegistro: formatDate(),
@@ -311,7 +313,6 @@ exports.aprobar = async (req, res, next) => {
       delete comercio.productos;
       delete comercio.cuentaEmail;
       delete comercio.cuentaPasswordHash;
-      delete comercio.email;
       delete comercio.emailVerificado;
       delete comercio.telefonoVerificado;
       delete comercio.declaraDerechos;
@@ -362,7 +363,7 @@ exports.aprobar = async (req, res, next) => {
         cola.encolar('bienvenida-comercio', { email: emailDestino, nombre: datos.nombrePropietario || datos.nombreNegocio });
       } else {
         // Flujo con invitación: el email de contacto se verificó en el formulario
-        const emailInv = String(datos.email || datos.cuentaEmail || '').toLowerCase().trim();
+        const emailInv = emailComercio;
         if (emailInv) {
           const crypto = require('crypto');
           const token = crypto.randomBytes(32).toString('hex');
